@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/filmLogo.gif</file>
+        <file>icons/icon.ico</file>
+        <file>icons/addfilmIcon.png</file>
+        <file>icons/addNoteBut.png</file>
+        <file>icons/exitIcon.png</file>
+    </qresource>
+</RCC>
