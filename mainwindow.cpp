@@ -33,6 +33,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     infoFilmLayout->addWidget(infoFilmBut);
     infoFilmLayout->setContentsMargins(0,15,0,0);
     boxLay->addLayout(infoFilmLayout);
+    //changing
 
 //---------Tlacitka-----------
 
