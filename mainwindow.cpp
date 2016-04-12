@@ -31,6 +31,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     infoFilmBut->setFixedSize(110,30);
     infoFilmBut->setFont(QFont("Times New Roman",11));
     infoFilmLayout->addWidget(infoFilmBut);
+    connect(infoFilmBut,SIGNAL(clicked(bool)),this,SLOT(aboutFilm()));
     infoFilmLayout->setContentsMargins(0,15,0,0);
     boxLay->addLayout(infoFilmLayout);
 
@@ -181,33 +182,46 @@ void MainWindow::filmAdding(){
 
 }
 void MainWindow::cleareFilm(){
-    QMessageBox msgBox;
-    msgBox.setWindowTitle("Upozorneni");
-    msgBox.setText("Opravdu chcete vse smazat?");
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.setStandardButtons(QMessageBox::Yes);
-    msgBox.addButton(QMessageBox::No);
-    msgBox.setDefaultButton(QMessageBox::No);
-    msgBox.setWindowIcon(windowIcon());
-    if(msgBox.exec() == QMessageBox::Yes){
-        filmNameLE->clear();
-        filmNameLE->setFocus();
-        for(int i = 0;i<genreCH->size();i++){
-            genreCH->at(i)->setChecked(false);
-        }
 
-        filmYear->setValue(1920);
-        filmLength->clear();
-        filmDirector->clear();
-        filmCountry->clear();
-        filmNote->clear();
+    QMessageBox added;
+    if((filmNameLE->text().length()|| filmLength->text().length()||
+        filmDirector->text().length()||filmCountry->text().length()||
+        filmNote->document()->toPlainText().length())==0){
+        added.setText("Neni co mazat!");
+        added.setIcon(QMessageBox::Warning);
+        added.setWindowIcon(windowIcon());
+        added.exec();
+    }
+    else{
+
+        QMessageBox msgBox;
+        msgBox.setWindowTitle("Upozorneni");
+        msgBox.setText("Opravdu chcete vse smazat?");
+        msgBox.setIcon(QMessageBox::Question);
+        msgBox.setStandardButtons(QMessageBox::Yes);
+        msgBox.addButton(QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        msgBox.setWindowIcon(windowIcon());
+        if(msgBox.exec() == QMessageBox::Yes){
+            filmNameLE->clear();
+            filmNameLE->setFocus();
+            for(int i = 0;i<genreCH->size();i++){
+                genreCH->at(i)->setChecked(false);
+            }
+
+            filmYear->setValue(1920);
+            filmLength->clear();
+            filmDirector->clear();
+            filmCountry->clear();
+            filmNote->clear();
+        }
     }
 
 }
 void MainWindow::closeFilm(){
     QMessageBox closeMsg;
     closeMsg.setWindowTitle("Upozornění");
-    closeMsg.setText("Opravdu chcete zrušit?");
+    closeMsg.setText("Opravdu chcete odejít?");
     closeMsg.setWindowIcon(windowIcon());
     closeMsg.setIcon(QMessageBox::Question);
     closeMsg.setStandardButtons(QMessageBox::Yes);
@@ -297,13 +311,135 @@ void MainWindow::commentAdding()
         hGenderLay->addWidget(r);
 
     }
-
-
-
     vNoteLay->addLayout(hGenderLay);
+
+    //------------Komentar------------
+    commentLabel = new QLabel("Komentář");
+    commentTE = new QTextEdit();
+    vNoteLay->addWidget(commentLabel);
+    vNoteLay->addWidget(commentTE);
+
+    //---------Tlacitka-----------
+    hButLay = new QHBoxLayout();
+    comCloseBut = new QPushButton("Zrušit");
+    comCLearBut = new QPushButton("Vymazat");
+    comAddBut = new QPushButton("Přidat");
+
+    comCloseBut->setFixedHeight(30);
+    comCLearBut->setFixedHeight(30);
+    comAddBut->setFixedHeight(30);
+
+    connect(comCloseBut,SIGNAL(clicked(bool)),this,SLOT(closeComment()));
+    hButLay->addWidget(comCloseBut);
+    connect(comCLearBut,SIGNAL(clicked(bool)),this,SLOT(clearComment()));
+    hButLay->addWidget(comCLearBut);
+    connect(comAddBut,SIGNAL(clicked(bool)),this,SLOT(addComment()));
+    hButLay->addWidget(comAddBut);
+    vNoteLay->addLayout(hButLay);
     noteWIDG->setLayout(vNoteLay);
     comMainWin->setCentralWidget(noteWIDG);
     comMainWin->show();
+
+
+}
+
+void MainWindow::clearComment()
+{
+    if((nickLE->text().length()||mailLE->text().length()||
+        gRad->at(0)->isChecked()||gRad->at(1)->isChecked()||
+        commentTE->document()->toPlainText().length())==0){
+        QMessageBox added;
+        added.setText("Neni co mazat!");
+        added.setIcon(QMessageBox::Warning);
+        added.setWindowIcon(windowIcon());
+        added.exec();
+    }
+    else{
+        QMessageBox clrscr;
+        clrscr.setWindowTitle("Upozorneni");
+        clrscr.setText("Opravdu chcete vse smazat?");
+        clrscr.setIcon(QMessageBox::Question);
+        clrscr.setStandardButtons(QMessageBox::Yes);
+        clrscr.addButton(QMessageBox::No);
+        clrscr.setDefaultButton(QMessageBox::No);
+        clrscr.setWindowIcon(windowIcon());
+        if(clrscr.exec() == QMessageBox::Yes){
+            nickLE->clear();
+            nickLE->setFocus();
+            mailLE->clear();
+            for(int i = 0;i<gRad->size();i++){
+                gRad->at(i)->setAutoExclusive(false);
+                gRad->at(i)->setChecked(false);
+                gRad->at(i)->setAutoExclusive(true);
+            }
+            commentTE->clear();
+        }
+    }
+
+}
+
+void MainWindow::addComment()
+{
+    QDate d;
+    QTime t;
+    if(!isFilledComment())
+        return;
+
+    QString comStr = "";
+    comStr.append(nickLE->text() + "\t");
+    comStr.append(d.currentDate().toString("yyyy-MM-dd") + ", "
+                  + t.currentTime().toString("hh:mm:ss") + "\t");
+    comStr.append(mailLE->text() + "\t");
+    for(int i = 0; i<gRad->size();i++){
+        if(gRad->at(i)->isChecked()){
+            comStr.append(gRad->at(i)->text() + "\t");
+        }
+    }
+    comStr.append(commentTE->document()->toPlainText()+"\n");
+
+    QFile comFile("Komentare.txt");
+    QTextStream comTS(&comFile);
+    if (!comFile.open(QIODevice::Append | QIODevice::Text))
+    {
+        return;
+    }
+    comTS.setCodec("UTF-8");
+    comTS << comStr;
+    comFile.close();
+
+    QMessageBox comMB;
+    comMB.setText("Komentář byl úsěšně přidán");
+    comMB.setIcon(QMessageBox::Information);
+    comMB.setWindowIcon(windowIcon());
+    comMB.exec();
+
+}
+
+void MainWindow::closeComment()
+{
+    QMessageBox clrscr;
+    clrscr.setWindowTitle("Upozorneni");
+    clrscr.setText("Opravdu chcete odejít?");
+    clrscr.setIcon(QMessageBox::Question);
+    clrscr.setStandardButtons(QMessageBox::Yes);
+    clrscr.addButton(QMessageBox::No);
+    clrscr.setDefaultButton(QMessageBox::No);
+    clrscr.setWindowIcon(windowIcon());
+    if(clrscr.exec() == QMessageBox::Yes){
+        comMainWin->close();
+    }
+}
+
+void MainWindow::aboutFilm()
+{
+    infoMW = new QMainWindow();
+    infoMW->setWindowTitle("Info o filmu");
+    infoMW->setWindowIcon(windowIcon());
+    infoMW->resize(300,300);
+
+    //infoWIDG->setLayout(vInfoLay);
+    //infoMW->setCentralWidget(infoWIDG);
+    infoMW->show();
 
 
 }
@@ -359,5 +495,44 @@ void MainWindow::showMSG(QString msg)
     mb.setWindowIcon(windowIcon());
     mb.setIcon(QMessageBox::Warning);
     mb.exec();
+
+}
+
+bool MainWindow::isFilledComment()
+{
+    if(nickLE->text().length()==0){
+        showComMSG("Název nicku");
+        return false;
+    }
+    if(mailLE->text().length()==0){
+        showComMSG("E-mail");
+        return false;
+    }
+    bool ischecked = false;
+    for(int i = 0;i<gRad->size();i++){
+        if(gRad->at(i)->isChecked())
+            ischecked = true;
+
+    }
+    if(!ischecked){
+        showComMSG("Pohlavi");
+        return false;
+    }
+
+    if(commentTE->document()->toPlainText() == 0){
+        showComMSG("Komentář");
+        return false;
+    }
+
+    return true;
+}
+
+void MainWindow::showComMSG(QString s)
+{
+    QMessageBox msgCom;
+    msgCom.setText("Nevyplnil jsi pole '" + s +"'");
+    msgCom.setWindowIcon(windowIcon());
+    msgCom.setIcon(QMessageBox::Warning);
+    msgCom.exec();
 
 }

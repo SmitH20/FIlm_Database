@@ -88,6 +88,7 @@ private:
     QMainWindow* comMainWin;
     QVBoxLayout* vNoteLay;
     QHBoxLayout* hGenderLay;
+    QHBoxLayout* hButLay;
     QWidget* noteWIDG;
     QLabel* nickLabel;
     QLineEdit* nickLE;
@@ -103,6 +104,14 @@ private:
     QPushButton* comCloseBut;
     QPushButton* comCLearBut;
     QPushButton* comAddBut;
+    bool isFilledComment();
+
+    void showComMSG(QString s);
+
+//-----Info o filmu--------
+    QMainWindow* infoMW;
+    QVBoxLayout* vInfoLay;
+    QWidget* infoWIDG;
 
 
 
@@ -124,6 +133,10 @@ private slots:
     void closeFilm();
     void addFilm();
     void commentAdding();
+    void clearComment();
+    void addComment();
+    void closeComment();
+    void aboutFilm();
 
 
 
