@@ -19,6 +19,9 @@
 #include <QStringList>
 #include <QDebug>
 #include <QTextEdit>
+#include <QFile>
+#include <QDate>
+#include <QTime>
 
 
 class MainWindow : public QMainWindow
@@ -95,6 +98,7 @@ private slots:
     void filmAdding();
     void cleareFilm();
     void closeFilm();
+    void addFilm();
 
 
 

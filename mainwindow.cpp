@@ -136,6 +136,7 @@ void MainWindow::filmAdding(){
     filmYear = new QSpinBox();
     filmLength = new QLineEdit();
     filmLength->setValidator(new QIntValidator(0,999,this));
+
     filmYear->setMinimum(1920);
     filmYear->setMaximum(2016);
     filmLength->setFixedWidth(50);
@@ -150,14 +151,13 @@ void MainWindow::filmAdding(){
     yearLengthDirect->addWidget(countryLabel,0,3);
     yearLengthDirect->addWidget(filmCountry,1,3);
     vboxlay2->addLayout(yearLengthDirect);
-//--------------POznamka-------------------
+//--------------Poznamka-------------------
     filmNote = new QTextEdit();
     noteLabel = new QLabel("Obsah filmu");
     vboxlay2->addWidget(noteLabel);
     vboxlay2->addWidget(filmNote);
     widget2->setLayout(vboxlay2);
-
-//---------tlacitka--------------
+//---------Tlacitka--------------
     filmButLay = new QHBoxLayout();
     filmCloseBut = new QPushButton("Zrušit");
     filmCLEAREBut = new QPushButton("Vymazat");
@@ -171,6 +171,7 @@ void MainWindow::filmAdding(){
     filmButLay->addWidget(filmCLEAREBut);
     connect(filmCLEAREBut,SIGNAL(clicked(bool)),this,SLOT(cleareFilm()));
     filmButLay->addWidget(filmADDBut);
+    connect(filmADDBut,SIGNAL(clicked(bool)),this,SLOT(addFilm()));
     vboxlay2->addLayout(filmButLay);
     mw->setCentralWidget(widget2);
     mw->show();
@@ -217,6 +218,31 @@ void MainWindow::closeFilm(){
     if(closeMsg.exec()==QMessageBox::Yes){
         mw->close();
     }
+}
+
+void MainWindow::addFilm()
+{
+    QString str = "";
+    QDate d;
+    QTime t;
+    str.append(filmNameLE->text()+ "\t" );
+    for(int i = 0;i<genreCH->size();i++){
+        QString tmp = (genreCH->at(i)->checkState() == Qt::CheckState::Checked) ? "1" : "0";
+        str.append(tmp + "\t");
+    }
+    str.append(QString::number(filmYear->value()) + "\t");
+    str.append(filmLength->text() + "\t");
+    str.append(filmDirector->text() + "\t");
+    str.append(filmCountry->text() + "\t");
+    str.append(filmNote->document()->toPlainText() + "\n");
+
+    QFile file("FIlmy.txt");
+    if(!file.open(QFile::Append | QFile::Text)){
+        return;
+    }
+    file.write(str.toLatin1().data());
+    file.close();
+
 }
 
 MainWindow::~MainWindow()
