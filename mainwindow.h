@@ -81,6 +81,9 @@ private:
     int genre_size;
     QMessageBox* q;
 
+    bool isFilled();
+    void showMSG(QString msg);
+
 
 
 

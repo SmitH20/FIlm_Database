@@ -8,7 +8,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     setWindowTitle("Filmová databáze");
     setWindowIcon(QIcon(":/icons/icon.ico"));
     setFixedSize(700,370);
- //------LOGO--------------
+    //------LOGO--------------
     boxLay = new QVBoxLayout();
     boxLay->setAlignment(Qt::AlignTop|Qt::AlignCenter);
     widget = new QWidget();
@@ -17,7 +17,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     logo = new QLabel();
     logo->setPixmap(p);
     boxLay->addWidget(logo);
-//-------Vyber a info------
+    //-------Vyber a info------
     infoFilmLayout = new QHBoxLayout();
     infoFilmLabel = new QLabel("Výběr filmu:");
     infoFilmBut = new QPushButton("Zobrazit info");
@@ -35,7 +35,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     boxLay->addLayout(infoFilmLayout);
 
 
-//---------Tlacitka-----------
+    //---------Tlacitka-----------
 
     filmNoteExitLay = new QHBoxLayout();
     filmNoteExitLay->setContentsMargins(0,25,0,0);
@@ -102,7 +102,7 @@ void MainWindow::filmAdding(){
 
     filmNameLE->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     vboxlay2->addWidget(filmNameLE);
-//------------Zanr------------------------
+    //------------Zanr------------------------
 
     QString genre[] = {"Horor","Komedie","Sci-fi","Drama","Akcni","Kresleny",
                        "Romanticky","Western","Thriller","Hudebni"};
@@ -120,7 +120,7 @@ void MainWindow::filmAdding(){
     }
 
     vboxlay2->addLayout(genreLay);
-//-----------Rok,Delka,Rezie,Zeme--------------
+    //-----------Rok,Delka,Rezie,Zeme--------------
     yearLengthDirect->setContentsMargins(0,5,0,0);
     yearLabel = new QLabel("Rok filmu");
     lengthLabel = new QLabel("Délka filmu");
@@ -137,8 +137,9 @@ void MainWindow::filmAdding(){
     filmLength = new QLineEdit();
     filmLength->setValidator(new QIntValidator(0,999,this));
 
+
     filmYear->setMinimum(1920);
-    filmYear->setMaximum(2016);
+    filmYear->setMaximum(QDate().currentDate().toString("yyyy").toInt());
     filmLength->setFixedWidth(50);
     filmCountry->setFixedWidth(100);
 
@@ -151,13 +152,14 @@ void MainWindow::filmAdding(){
     yearLengthDirect->addWidget(countryLabel,0,3);
     yearLengthDirect->addWidget(filmCountry,1,3);
     vboxlay2->addLayout(yearLengthDirect);
-//--------------Poznamka-------------------
+    //--------------Poznamka-------------------
     filmNote = new QTextEdit();
     noteLabel = new QLabel("Obsah filmu");
+    noteLabel->setFont(QFont("",9));
     vboxlay2->addWidget(noteLabel);
     vboxlay2->addWidget(filmNote);
     widget2->setLayout(vboxlay2);
-//---------Tlacitka--------------
+    //---------Tlacitka--------------
     filmButLay = new QHBoxLayout();
     filmCloseBut = new QPushButton("Zrušit");
     filmCLEAREBut = new QPushButton("Vymazat");
@@ -178,9 +180,6 @@ void MainWindow::filmAdding(){
 
 }
 void MainWindow::cleareFilm(){
-//    q = new QMessageBox;
-//    q->QMessageBox::question(this,"Warning","Are you sure?",QMessageBox::Yes|
-//                              QMessageBox::No);
     QMessageBox msgBox;
     msgBox.setWindowTitle("Upozorneni");
     msgBox.setText("Opravdu chcete vse smazat?");
@@ -188,7 +187,7 @@ void MainWindow::cleareFilm(){
     msgBox.setStandardButtons(QMessageBox::Yes);
     msgBox.addButton(QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
-    msgBox.setWindowIcon(QIcon(":/icons/icon.ico"));
+    msgBox.setWindowIcon(windowIcon());
     if(msgBox.exec() == QMessageBox::Yes){
         filmNameLE->clear();
         filmNameLE->setFocus();
@@ -208,7 +207,7 @@ void MainWindow::closeFilm(){
     QMessageBox closeMsg;
     closeMsg.setWindowTitle("Upozornění");
     closeMsg.setText("Opravdu chcete zrušit?");
-    closeMsg.setWindowIcon(QIcon(":/icons/icon.ico"));
+    closeMsg.setWindowIcon(windowIcon());
     closeMsg.setIcon(QMessageBox::Question);
     closeMsg.setStandardButtons(QMessageBox::Yes);
     closeMsg.addButton(QMessageBox::No);
@@ -222,9 +221,12 @@ void MainWindow::closeFilm(){
 
 void MainWindow::addFilm()
 {
+
+    if(!isFilled()){
+        return;
+    }
+
     QString str = "";
-    QDate d;
-    QTime t;
     str.append(filmNameLE->text()+ "\t" );
     for(int i = 0;i<genreCH->size();i++){
         QString tmp = (genreCH->at(i)->checkState() == Qt::CheckState::Checked) ? "1" : "0";
@@ -233,7 +235,7 @@ void MainWindow::addFilm()
     str.append(QString::number(filmYear->value()) + "\t");
     str.append(filmLength->text() + "\t");
     str.append(filmDirector->text() + "\t");
-    str.append(filmCountry->text() + "\t");
+    str.append(filmCountry->text().toUpper() + "\t");
     str.append(filmNote->document()->toPlainText() + "\n");
 
     QFile file("FIlmy.txt");
@@ -243,9 +245,64 @@ void MainWindow::addFilm()
     file.write(str.toLatin1().data());
     file.close();
 
+    QMessageBox added;
+    added.setText("Film byl úspěšně přidán!");
+    added.setIcon(QMessageBox::Information);
+    added.setWindowIcon(windowIcon());
+    added.exec();
+
 }
+
 
 MainWindow::~MainWindow()
 {
+
+}
+
+bool MainWindow::isFilled()
+{
+    if(filmNameLE->text().length() == 0){
+        showMSG("Nazev filmu");
+        return false;
+
+    }
+    bool isChecked = false;
+    for(int i = 0 ;i<genreCH->size();i++){
+
+        if(genreCH->at(i)->checkState() == Qt::Checked){
+            isChecked = true;
+        }
+    }
+    if(!isChecked){
+        showMSG("Žánr");
+        return false;
+    }
+    if(filmLength->text().length() == 0){
+        showMSG("Délka filmu");
+        return false;
+    }
+    if(filmDirector->text().length() == 0){
+        showMSG("Režie");
+        return false;
+    }
+    if(filmCountry->text().length() == 0){
+        showMSG("Původ");
+        return false;
+    }
+    if(filmNote->document()->toPlainText().length() == 0){
+        showMSG("Obsah filmu");
+        return false;
+    }
+
+    return true;
+}
+
+void MainWindow::showMSG(QString msg)
+{
+    QMessageBox mb;
+    mb.setText("Nevyplnil jsi pole '" + msg +"'");
+    mb.setWindowIcon(windowIcon());
+    mb.setIcon(QMessageBox::Warning);
+    mb.exec();
 
 }
