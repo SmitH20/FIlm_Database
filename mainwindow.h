@@ -94,6 +94,7 @@ private slots:
     void aboutProgram();
     void filmAdding();
     void cleareFilm();
+    void closeFilm();
 
 
 

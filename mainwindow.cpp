@@ -33,7 +33,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     infoFilmLayout->addWidget(infoFilmBut);
     infoFilmLayout->setContentsMargins(0,15,0,0);
     boxLay->addLayout(infoFilmLayout);
-    //changing
+
 
 //---------Tlacitka-----------
 
@@ -135,6 +135,7 @@ void MainWindow::filmAdding(){
 
     filmYear = new QSpinBox();
     filmLength = new QLineEdit();
+    filmLength->setValidator(new QIntValidator(0,999,this));
     filmYear->setMinimum(1920);
     filmYear->setMaximum(2016);
     filmLength->setFixedWidth(50);
@@ -166,6 +167,7 @@ void MainWindow::filmAdding(){
     filmCLEAREBut->setFixedHeight(40);
 
     filmButLay->addWidget(filmCloseBut);
+    connect(filmCloseBut,SIGNAL(clicked(bool)),this,SLOT(closeFilm()));
     filmButLay->addWidget(filmCLEAREBut);
     connect(filmCLEAREBut,SIGNAL(clicked(bool)),this,SLOT(cleareFilm()));
     filmButLay->addWidget(filmADDBut);
@@ -200,7 +202,21 @@ void MainWindow::cleareFilm(){
         filmNote->clear();
     }
 
+}
+void MainWindow::closeFilm(){
+    QMessageBox closeMsg;
+    closeMsg.setWindowTitle("Upozornění");
+    closeMsg.setText("Opravdu chcete zrušit?");
+    closeMsg.setWindowIcon(QIcon(":/icons/icon.ico"));
+    closeMsg.setIcon(QMessageBox::Question);
+    closeMsg.setStandardButtons(QMessageBox::Yes);
+    closeMsg.addButton(QMessageBox::No);
 
+    //closeMsg.setDefaultButton(QMessageBox::No);
+
+    if(closeMsg.exec()==QMessageBox::Yes){
+        mw->close();
+    }
 }
 
 MainWindow::~MainWindow()
