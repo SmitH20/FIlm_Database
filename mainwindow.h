@@ -22,6 +22,7 @@
 #include <QFile>
 #include <QDate>
 #include <QTime>
+#include <QRadioButton>
 
 
 class MainWindow : public QMainWindow
@@ -83,6 +84,26 @@ private:
 
     bool isFilled();
     void showMSG(QString msg);
+//-------přidat komentář------
+    QMainWindow* comMainWin;
+    QVBoxLayout* vNoteLay;
+    QHBoxLayout* hGenderLay;
+    QWidget* noteWIDG;
+    QLabel* nickLabel;
+    QLineEdit* nickLE;
+    QLabel* mailLabel;
+    QLineEdit* mailLE;
+    QLabel* genderLabel;
+    QList<QRadioButton*>*gRad;
+    QRadioButton* r;
+    int gender_size;
+    QGridLayout*g;
+    QLabel* commentLabel;
+    QTextEdit* commentTE;
+    QPushButton* comCloseBut;
+    QPushButton* comCLearBut;
+    QPushButton* comAddBut;
+
 
 
 
@@ -102,6 +123,7 @@ private slots:
     void cleareFilm();
     void closeFilm();
     void addFilm();
+    void commentAdding();
 
 
 

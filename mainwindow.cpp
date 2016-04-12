@@ -52,6 +52,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     addNoteBut->setIconSize(QSize(100,60));
     addNoteBut->setFixedSize(150,80);
     addNoteBut->setToolTip("Přidat komentář");
+    connect(addNoteBut,SIGNAL(clicked(bool)),this,SLOT(commentAdding()));
     filmNoteExitLay->addWidget(addNoteBut);
     exitBut->setIcon(QIcon(":/icons/exitIcon.png"));
     exitBut->setIconSize(QSize(100,60));
@@ -221,10 +222,8 @@ void MainWindow::closeFilm(){
 
 void MainWindow::addFilm()
 {
-
-    if(!isFilled()){
+    if(!isFilled())
         return;
-    }
 
     QString str = "";
     str.append(filmNameLE->text()+ "\t" );
@@ -239,17 +238,73 @@ void MainWindow::addFilm()
     str.append(filmNote->document()->toPlainText() + "\n");
 
     QFile file("FIlmy.txt");
-    if(!file.open(QFile::Append | QFile::Text)){
+    QTextStream ts(&file);
+    if (!file.open(QIODevice::Append | QIODevice::Text))
+    {
         return;
     }
-    file.write(str.toLatin1().data());
-    file.close();
+    ts.setCodec("UTF-8");
+    ts << str;
+
+    //    if(!file.open(QFile::Append | QFile::Text)){
+    //        return;
+    //    }
+    //    file.write(str.toLatin1().data());
+    //    file.close();
 
     QMessageBox added;
     added.setText("Film byl úspěšně přidán!");
     added.setIcon(QMessageBox::Information);
     added.setWindowIcon(windowIcon());
     added.exec();
+
+}
+
+void MainWindow::commentAdding()
+{
+    comMainWin = new QMainWindow();
+    vNoteLay = new QVBoxLayout();
+    hGenderLay = new QHBoxLayout();
+    noteWIDG = new QWidget();
+    nickLabel = new QLabel("Název nicku");
+    nickLE = new QLineEdit();
+    mailLabel = new QLabel("E-mail");
+    mailLE = new QLineEdit();
+    gRad = new QList<QRadioButton*>();
+    g = new QGridLayout();
+    genderLabel = new QLabel("Pohlaví");
+    hGenderLay->setAlignment(Qt::AlignLeft);
+    g->setAlignment(Qt::AlignLeft);
+
+
+    vNoteLay->setAlignment(Qt::AlignTop);
+
+    comMainWin->setWindowTitle("Přidat komentář");
+    comMainWin->setWindowIcon(windowIcon());
+    comMainWin->resize(300,300);
+    vNoteLay->addWidget(nickLabel);
+    vNoteLay->addWidget(nickLE);
+    vNoteLay->addWidget(mailLabel);
+    vNoteLay->addWidget(mailLE);
+    vNoteLay->addWidget(genderLabel);
+    QString sex[] = {"Muž","Žena"};
+    gender_size = sizeof(sex)/sizeof(QString);
+    int col = 0;
+    for(int i = 0; i<gender_size;i++){
+        r = new QRadioButton(sex[i]);
+        col++;
+        gRad->append(r);
+        hGenderLay->addWidget(r);
+
+    }
+
+
+
+    vNoteLay->addLayout(hGenderLay);
+    noteWIDG->setLayout(vNoteLay);
+    comMainWin->setCentralWidget(noteWIDG);
+    comMainWin->show();
+
 
 }
 
