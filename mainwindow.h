@@ -24,6 +24,7 @@
 #include <QTime>
 #include <QRadioButton>
 #include <QGroupBox>
+#include <QSortFilterProxyModel>
 
 
 class MainWindow : public QMainWindow

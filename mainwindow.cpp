@@ -8,6 +8,9 @@ MainWindow::MainWindow(QMainWindow *parent)
     setWindowTitle("Filmová databáze");
     setWindowIcon(QIcon(":/icons/icon.ico"));
     setFixedSize(700,370);
+    setWindowFlags(Qt::FramelessWindowHint);
+    setWindowFlags(Qt::WindowTitleHint);
+
     //------LOGO--------------
     boxLay = new QVBoxLayout();
     boxLay->setAlignment(Qt::AlignTop|Qt::AlignCenter);
@@ -26,9 +29,6 @@ MainWindow::MainWindow(QMainWindow *parent)
     infoFilmLabel->setFont(QFont("Times New Roman",14,87,0));
     infoFilmLayout->addWidget(infoFilmLabel);
     comboInsert();
-    //    comboBox->addItem("Hosi od bobri rekz 2");
-    //    comboBox->addItem("Trhala bobri rekz 2");
-
     comboBox->setFixedSize(410,28);
     comboBox->setFont(QFont("Times New Roman",11));
     infoFilmLayout->addWidget(comboBox);
@@ -77,7 +77,6 @@ void MainWindow::createMenu(){
     fileMenu->addAction(about);
     connect(about,SIGNAL(triggered(bool)),this,SLOT(aboutProgram()));
     menuBar()->addMenu(fileMenu);
-
 }
 
 void MainWindow::aboutProgram(){
@@ -102,6 +101,7 @@ void MainWindow::filmAdding(){
     mw->resize(400,400);
     filmNameLabel = new QLabel("Název filmu");
     filmNameLabel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+
     vboxlay2->setAlignment(Qt::AlignTop);
     vboxlay2->addWidget(filmNameLabel);
 
@@ -109,8 +109,8 @@ void MainWindow::filmAdding(){
     vboxlay2->addWidget(filmNameLE);
     //------------Zanr------------------------
 
-    QString genre[] = {"Horor","Komedie","Sci-fi","Drama","Akcni","Kresleny",
-                       "Romanticky","Western","Thriller","Hudebni"};
+    QString genre[] = {"Horor","Komedie","Sci-fi","Drama","Akční","Kreslený",
+                       "Romantický","Dobrodružný","Thriller","Rodinný"};
     genre_size = sizeof(genre)/ sizeof(QString);
     genreLay = new QGridLayout();
     genreCH = new QList<QCheckBox*>();
@@ -123,7 +123,6 @@ void MainWindow::filmAdding(){
         genreLay->addWidget(ch,row,col);
         ch->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     }
-
     vboxlay2->addLayout(genreLay);
     //-----------Rok,Delka,Rezie,Zeme--------------
     yearLengthDirect->setContentsMargins(0,5,0,0);
@@ -137,7 +136,6 @@ void MainWindow::filmAdding(){
     filmYear = new QSpinBox();
     filmLength = new QLineEdit();
     filmLength->setValidator(new QIntValidator(0,999,this));
-
 
     filmYear->setMinimum(1920);
     filmYear->setMaximum(QDate().currentDate().toString("yyyy").toInt());
@@ -161,7 +159,7 @@ void MainWindow::filmAdding(){
     widget2->setLayout(vboxlay2);
     //---------Tlacitka--------------
     filmButLay = new QHBoxLayout();
-    filmCloseBut = new QPushButton("Zrušit");
+    filmCloseBut = new QPushButton("Zavřít");
     filmCLEAREBut = new QPushButton("Vymazat");
     filmADDBut = new QPushButton("Přidat");
     filmCloseBut->setFixedHeight(40);
@@ -191,7 +189,6 @@ void MainWindow::cleareFilm(){
         added.exec();
     }
     else{
-
         QMessageBox msgBox;
         msgBox.setWindowTitle("Upozorneni");
         msgBox.setText("Opravdu chcete vse smazat?");
@@ -214,7 +211,6 @@ void MainWindow::cleareFilm(){
             filmNote->clear();
         }
     }
-
 }
 void MainWindow::closeFilm(){
     QMessageBox closeMsg;
@@ -270,7 +266,6 @@ void MainWindow::addFilm()
     added.setWindowIcon(windowIcon());
     comboBox->addItem(filmNameLE->text());
     added.exec();
-
 }
 
 void MainWindow::commentAdding()
@@ -297,7 +292,7 @@ void MainWindow::commentAdding()
 
     comMainWin->setWindowTitle("Přidat komentář");
     comMainWin->setWindowIcon(windowIcon());
-    comMainWin->resize(300,300);
+    comMainWin->resize(350,300);
     vNoteLay->addWidget(filmLabel);
     vNoteLay->addWidget(combobox2);
     vNoteLay->addWidget(nickLabel);
@@ -325,7 +320,7 @@ void MainWindow::commentAdding()
 
     //---------Tlacitka-----------
     hButLay = new QHBoxLayout();
-    comCloseBut = new QPushButton("Zrušit");
+    comCloseBut = new QPushButton("Zavřít");
     comCLearBut = new QPushButton("Vymazat");
     comAddBut = new QPushButton("Přidat");
 
@@ -343,8 +338,6 @@ void MainWindow::commentAdding()
     noteWIDG->setLayout(vNoteLay);
     comMainWin->setCentralWidget(noteWIDG);
     comMainWin->show();
-
-
 }
 
 void MainWindow::clearComment()
@@ -379,7 +372,6 @@ void MainWindow::clearComment()
             commentTE->clear();
         }
     }
-
 }
 
 void MainWindow::addComment()
@@ -417,7 +409,6 @@ void MainWindow::addComment()
     comMB.setIcon(QMessageBox::Information);
     comMB.setWindowIcon(windowIcon());
     comMB.exec();
-
 }
 
 void MainWindow::closeComment()
@@ -456,13 +447,11 @@ void MainWindow::LoadComment()
     }
     komentar.close();
 
-
     QMainWindow* comWindow = new QMainWindow();
-
     comWindow->setWindowIcon(windowIcon());
-
     QVBoxLayout* vvb = new QVBoxLayout();
     vvb->setAlignment(Qt::AlignTop);
+    //comWindow->setMinimumHeight(200);
     QWidget* wdg = new QWidget();
 
     bool isExist = false;
@@ -482,6 +471,9 @@ void MainWindow::LoadComment()
             QLabel* mail2 = new QLabel();
             QLabel* gender2 = new QLabel();
             QLabel* comment2 = new QLabel();
+
+            comment2->setMaximumHeight(65);
+            comment2->setMinimumHeight(45);
 
             QVBoxLayout* nickLay = new QVBoxLayout();
             QVBoxLayout* dateTimeLay = new QVBoxLayout();
@@ -588,8 +580,6 @@ void MainWindow::aboutFilm(QStringList filmInfo)
     QLabel* country2 = new QLabel();
     QLabel* note2 = new QLabel();
 
-
-
     film->setStyleSheet("font-weight:bold");
     film2->setStyleSheet("font-weight:normal");
     genre->setStyleSheet("font-weight:bold");
@@ -604,8 +594,6 @@ void MainWindow::aboutFilm(QStringList filmInfo)
     country2->setStyleSheet("font-weight:normal");
     note->setStyleSheet("font-weight:bold");
     note2->setStyleSheet("font-weight:normal");
-
-
 
     note2->setWordWrap(true);
 
@@ -629,11 +617,11 @@ void MainWindow::aboutFilm(QStringList filmInfo)
             if(i == 7)
                 genres +="Romatický, ";
             if(i == 8)
-                genres +="Western, ";
+                genres +="Dobrodružný, ";
             if(i == 9)
                 genres +="Thriller, ";
             if(i == 10)
-                genres +="Hudební, ";
+                genres +="Rodinný, ";
         }
     }
     QString newGenres;
@@ -670,99 +658,26 @@ void MainWindow::aboutFilm(QStringList filmInfo)
     country->setLayout(countLay);
     countLay->addWidget(country2);
     hInfoLay->addWidget(country);
-
     vInfoLay->addLayout(hInfoLay);
 
     note->setLayout(noteLay);
     noteLay->addWidget(note2);
     vInfoLay->addWidget(note);
     QPushButton* entryComment = new QPushButton("Zobrazit komentář");
+    QPushButton* cancelAboutFilm = new QPushButton("Zavřít");
+    QHBoxLayout* hBut = new QHBoxLayout();
+    cancelAboutFilm->setFixedHeight(40);
     entryComment->setFixedHeight(40);
+    connect(cancelAboutFilm,SIGNAL(clicked(bool)),infoMW,SLOT(close()));
     connect(entryComment,SIGNAL(clicked(bool)),this,SLOT(LoadComment()));
-    vInfoLay->addWidget(entryComment);
+    hBut->addWidget(cancelAboutFilm);
+    hBut->addWidget(entryComment);
+    vInfoLay->addLayout(hBut);
 
 
     infoWIDG->setLayout(vInfoLay);
     infoMW->setCentralWidget(infoWIDG);
     infoMW->show();
-
-
-}
-
-void MainWindow::aboutComment(QStringList CommentInfo)
-{
-    noteWindow = new QMainWindow();
-
-
-    vComLay = new QVBoxLayout();
-    hComLay = new QHBoxLayout();
-    comWidg = new QWidget();
-    noteWindow->resize(350,200);
-    vComLay->setAlignment(Qt::AlignTop);
-    noteWindow->setWindowTitle(CommentInfo.at(0));
-    QGroupBox* nick = new QGroupBox("Nick");
-    QGroupBox* dateTime = new QGroupBox("Datum a čas");
-    QGroupBox* mail = new QGroupBox("E-mail");
-    QGroupBox* gender = new QGroupBox("Pohlaví");
-    QGroupBox* comment = new QGroupBox("Komentář");
-
-    QVBoxLayout* nickLay = new QVBoxLayout();
-    QVBoxLayout* dateTimeLay = new QVBoxLayout();
-    QVBoxLayout* mailLay = new QVBoxLayout();
-    QVBoxLayout* genderLay = new QVBoxLayout();
-    QVBoxLayout* commentLay = new QVBoxLayout();
-
-    QLabel* nick2 = new QLabel();
-    QLabel* dateTime2 = new QLabel();
-    QLabel* mail2 = new QLabel();
-    QLabel* gender2 = new QLabel();
-    QLabel* comment2 = new QLabel();
-
-    nick2->setText(CommentInfo.at(1));
-    dateTime2->setText(CommentInfo.at(2));
-    mail2->setText(CommentInfo.at(3));
-    gender2->setText(CommentInfo.at(4));
-    comment2->setText(CommentInfo.at(5));
-    comment2->setWordWrap(true);
-
-    nick->setStyleSheet("font-weight:bold");
-    nick2->setStyleSheet("font-weight:normal");
-    dateTime->setStyleSheet("font-weight:bold");
-    dateTime2->setStyleSheet("font-weight:normal");
-    mail->setStyleSheet("font-weight:bold");
-    mail2->setStyleSheet("font-weight:normal");
-    gender->setStyleSheet("font-weight:bold");
-    gender2->setStyleSheet("font-weight:normal");
-    comment->setStyleSheet("font-weight:bold");
-    comment2->setStyleSheet("font-weight:normal");
-
-    nick->setLayout(nickLay);
-    nickLay->addWidget(nick2);
-    vComLay->addWidget(nick);
-
-    dateTime->setLayout(dateTimeLay);
-    dateTimeLay->addWidget(dateTime2);
-    hComLay->addWidget(dateTime);
-
-    mail->setLayout(mailLay);
-    mailLay->addWidget(mail2);
-    hComLay->addWidget(mail);
-
-    gender->setLayout(genderLay);
-    genderLay->addWidget(gender2);
-    hComLay->addWidget(gender);
-
-    vComLay->addLayout(hComLay);
-
-    comment->setLayout(commentLay);
-    commentLay->addWidget(comment2);
-    vComLay->addWidget(comment);
-
-    comWidg->setLayout(vComLay);
-    noteWindow->setCentralWidget(comWidg);
-
-    noteWindow->show();
-
 }
 
 void MainWindow::comboInsert()
@@ -781,7 +696,6 @@ void MainWindow::comboInsert()
     for(int i = 0;i<filmy.size(); i++){
         comboBox->addItem(filmy.at(i).at(0));
     }
-
 }
 
 void MainWindow::comboInsert2()
@@ -800,9 +714,7 @@ void MainWindow::comboInsert2()
     for(int i = 0;i<filmy.size(); i++){
         combobox2->addItem(filmy.at(i).at(0));
     }
-
 }
-
 
 MainWindow::~MainWindow()
 {
@@ -854,7 +766,6 @@ void MainWindow::showMSG(QString msg)
     mb.setWindowIcon(windowIcon());
     mb.setIcon(QMessageBox::Warning);
     mb.exec();
-
 }
 
 bool MainWindow::isFilledComment()
@@ -923,9 +834,7 @@ void MainWindow::LoadFilm()
             aboutFilm(listFIlms->at(i));
             isExistIHope = true;
             break;
-
         }
-
     }
 
     if(!isExistIHope){
@@ -936,11 +845,4 @@ void MainWindow::LoadFilm()
         mb.setIcon(QMessageBox::Warning);
         mb.exec();
     }
-
-
-
-
-
-
-
 }
