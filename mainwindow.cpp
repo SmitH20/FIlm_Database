@@ -440,6 +440,12 @@ void MainWindow::LoadComment()
     QFile komentar("Komentare.txt");
     QList<QStringList>infoComment;
     if(!komentar.open(QFile::ReadOnly | QFile::Text)){
+        QMessageBox mb;
+        mb.setWindowTitle("Upozornění");
+        mb.setText("K tomuto filmu zatím není přidán žádný komentář!");
+        mb.setWindowIcon(windowIcon());
+        mb.setIcon(QMessageBox::Warning);
+        mb.exec();
         return;
     }
     while(!komentar.atEnd()){
@@ -523,39 +529,26 @@ void MainWindow::LoadComment()
             commentLay->addWidget(comment2);
             vvb->addWidget(comment);
 
-
-
-
-            isExist = true;
             wdg->setLayout(vvb);
             comWindow->setCentralWidget(wdg);
             comWindow->show();
-
-
-
+            isExist = true;
 
         }
-
-
     }
     QPushButton* endCom = new QPushButton("Zavřít");
+    connect(endCom,SIGNAL(clicked(bool)),comWindow,SLOT(close()));
+    endCom->setFixedHeight(40);
     vvb->addWidget(endCom);
-
 
     if(!isExist){
         QMessageBox mb;
         mb.setWindowTitle("Upozornění");
-        mb.setText("K tomutotu filmu zatim neni pridan zadny komentar!");
+        mb.setText("K tomuto filmu zatím není přidán žádný komentář!");
         mb.setWindowIcon(windowIcon());
         mb.setIcon(QMessageBox::Warning);
         mb.exec();
     }
-
-
-
-
-
-
 }
 
 void MainWindow::aboutFilm(QStringList filmInfo)
@@ -595,6 +588,8 @@ void MainWindow::aboutFilm(QStringList filmInfo)
     QLabel* country2 = new QLabel();
     QLabel* note2 = new QLabel();
 
+
+
     film->setStyleSheet("font-weight:bold");
     film2->setStyleSheet("font-weight:normal");
     genre->setStyleSheet("font-weight:bold");
@@ -609,6 +604,7 @@ void MainWindow::aboutFilm(QStringList filmInfo)
     country2->setStyleSheet("font-weight:normal");
     note->setStyleSheet("font-weight:bold");
     note2->setStyleSheet("font-weight:normal");
+
 
 
     note2->setWordWrap(true);
@@ -906,6 +902,12 @@ void MainWindow::LoadFilm()
     QString film = comboBox->currentText();
     listFIlms = new QList<QStringList>();
     if(!films.open(QFile::ReadOnly | QFile::Text)){
+        QMessageBox mb;
+        mb.setWindowTitle("Upozornění");
+        mb.setText("Nebyl zatím přidán žádný film!");
+        mb.setWindowIcon(windowIcon());
+        mb.setIcon(QMessageBox::Warning);
+        mb.exec();
         return;
     }
     while(!films.atEnd()){
@@ -915,13 +917,26 @@ void MainWindow::LoadFilm()
         listFIlms->append(st);
     }
     films.close();
+    bool isExistIHope = false;
     for(int i =0;i<listFIlms->size();i++){
         if(film == listFIlms->at(i).at(0)){
             aboutFilm(listFIlms->at(i));
+            isExistIHope = true;
             break;
+
         }
 
     }
+
+    if(!isExistIHope){
+        QMessageBox mb;
+        mb.setWindowTitle("Upozornění");
+        mb.setText("K tomuto filmu zatím není přidán žádný komentář!");
+        mb.setWindowIcon(windowIcon());
+        mb.setIcon(QMessageBox::Warning);
+        mb.exec();
+    }
+
 
 
 
