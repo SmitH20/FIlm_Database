@@ -23,6 +23,7 @@
 #include <QDate>
 #include <QTime>
 #include <QRadioButton>
+#include <QGroupBox>
 
 
 class MainWindow : public QMainWindow
@@ -91,6 +92,7 @@ private:
     QHBoxLayout* hButLay;
     QWidget* noteWIDG;
     QLabel* nickLabel;
+    QLabel* filmLabel;
     QLineEdit* nickLE;
     QLabel* mailLabel;
     QLineEdit* mailLE;
@@ -112,6 +114,17 @@ private:
     QMainWindow* infoMW;
     QVBoxLayout* vInfoLay;
     QWidget* infoWIDG;
+    QHBoxLayout* hInfoLay;
+    QLabel* extFilm;
+    QGridLayout* gridLay2;
+
+
+
+
+    QList<QStringList>* listFIlms;
+    void aboutFilm(QStringList filmInfo);
+    void comboInsert();
+
 
 
 
@@ -136,7 +149,8 @@ private slots:
     void clearComment();
     void addComment();
     void closeComment();
-    void aboutFilm();
+
+    void LoadFilm();
 
 
 

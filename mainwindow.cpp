@@ -17,6 +17,7 @@ MainWindow::MainWindow(QMainWindow *parent)
     logo = new QLabel();
     logo->setPixmap(p);
     boxLay->addWidget(logo);
+
     //-------Vyber a info------
     infoFilmLayout = new QHBoxLayout();
     infoFilmLabel = new QLabel("Výběr filmu:");
@@ -24,14 +25,17 @@ MainWindow::MainWindow(QMainWindow *parent)
     comboBox = new QComboBox();
     infoFilmLabel->setFont(QFont("Times New Roman",14,87,0));
     infoFilmLayout->addWidget(infoFilmLabel);
-    comboBox->addItem("Hosi od bobri rekz 2");
+    comboInsert();
+//    comboBox->addItem("Hosi od bobri rekz 2");
+//    comboBox->addItem("Trhala bobri rekz 2");
+
     comboBox->setFixedSize(410,28);
     comboBox->setFont(QFont("Times New Roman",11));
     infoFilmLayout->addWidget(comboBox);
     infoFilmBut->setFixedSize(110,30);
     infoFilmBut->setFont(QFont("Times New Roman",11));
     infoFilmLayout->addWidget(infoFilmBut);
-    connect(infoFilmBut,SIGNAL(clicked(bool)),this,SLOT(aboutFilm()));
+    connect(infoFilmBut,SIGNAL(clicked(bool)),this,SLOT(LoadFilm()));
     infoFilmLayout->setContentsMargins(0,15,0,0);
     boxLay->addLayout(infoFilmLayout);
 
@@ -270,6 +274,7 @@ void MainWindow::addFilm()
     added.setText("Film byl úspěšně přidán!");
     added.setIcon(QMessageBox::Information);
     added.setWindowIcon(windowIcon());
+    comboBox->addItem(filmNameLE->text());
     added.exec();
 
 }
@@ -277,6 +282,7 @@ void MainWindow::addFilm()
 void MainWindow::commentAdding()
 {
     comMainWin = new QMainWindow();
+    filmLabel = new QLabel("Název filmu");
     vNoteLay = new QVBoxLayout();
     hGenderLay = new QHBoxLayout();
     noteWIDG = new QWidget();
@@ -296,6 +302,8 @@ void MainWindow::commentAdding()
     comMainWin->setWindowTitle("Přidat komentář");
     comMainWin->setWindowIcon(windowIcon());
     comMainWin->resize(300,300);
+    vNoteLay->addWidget(filmLabel);
+    vNoteLay->addWidget(comboBox);
     vNoteLay->addWidget(nickLabel);
     vNoteLay->addWidget(nickLE);
     vNoteLay->addWidget(mailLabel);
@@ -386,6 +394,7 @@ void MainWindow::addComment()
         return;
 
     QString comStr = "";
+    comStr.append(comboBox->currentText() + "\t");
     comStr.append(nickLE->text() + "\t");
     comStr.append(d.currentDate().toString("yyyy-MM-dd") + ", "
                   + t.currentTime().toString("hh:mm:ss") + "\t");
@@ -430,17 +439,141 @@ void MainWindow::closeComment()
     }
 }
 
-void MainWindow::aboutFilm()
+void MainWindow::aboutFilm(QStringList filmInfo)
 {
     infoMW = new QMainWindow();
+    vInfoLay = new QVBoxLayout();
+    hInfoLay = new QHBoxLayout();
+    infoWIDG = new QWidget();
+    QGroupBox* genre = new QGroupBox("Žánr");
+    QGroupBox* film = new QGroupBox("Název filmu");
+    QGroupBox* year = new QGroupBox("Rok filmu");
+    QGroupBox* length = new QGroupBox("Délka filmu");
+    QGroupBox* director = new QGroupBox("Režie");
+    QGroupBox* country = new QGroupBox("Původ filmu");
+    QGroupBox* note = new QGroupBox("Obsah filmu");
+
+    QVBoxLayout* filmLay = new QVBoxLayout();
+    QVBoxLayout* genreLay = new QVBoxLayout();
+    QVBoxLayout* yearLay = new QVBoxLayout();
+    QVBoxLayout* lenLay = new QVBoxLayout();
+    QVBoxLayout* dirLay = new QVBoxLayout();
+    QVBoxLayout* countLay = new QVBoxLayout();
+    QVBoxLayout* noteLay = new QVBoxLayout();
+
+    QLabel* film2 = new QLabel();
+    QLabel* genre2 = new QLabel();
+    QLabel* length2 = new QLabel();
+    QLabel* year2 = new QLabel();
+    QLabel* director2 = new QLabel();
+    QLabel* country2 = new QLabel();
+    QLabel* note2 = new QLabel();
+    \
+    genre->setStyleSheet("font-weight:bold");
+    genre2->setStyleSheet("font-weight:normal");
+    length->setStyleSheet("font-weight:bold");
+    year->setStyleSheet("font-weight:bold");
+    director->setStyleSheet("font-weight:bold");
+    country->setStyleSheet("font-weight:bold");
+    note->setStyleSheet("font-weight:bold");
     infoMW->setWindowTitle("Info o filmu");
     infoMW->setWindowIcon(windowIcon());
     infoMW->resize(300,300);
+    vInfoLay->setAlignment(Qt::AlignTop);
 
-    //infoWIDG->setLayout(vInfoLay);
-    //infoMW->setCentralWidget(infoWIDG);
+    film2->setText(comboBox->currentText());
+
+    QString genres;
+    for(int i = 1;i<11;i++){
+        if(filmInfo.at(i) == "1"){
+            if(i == 1)
+                genres +="Horor, ";
+            if(i == 2)
+                genres +="Komedie, ";
+            if(i == 3)
+                genres +="Sci-fi, ";
+            if(i == 4)
+                genres +="Drama, ";
+            if(i == 5)
+                genres +="Akční, ";
+            if(i == 6)
+                genres +="Kreslený, ";
+            if(i == 7)
+                genres +="Romatický, ";
+            if(i == 8)
+                genres +="Western, ";
+            if(i == 9)
+                genres +="Thriller, ";
+            if(i == 10)
+                genres +="Hudební, ";
+        }
+
+    }
+    QString newGenres;
+    for(int i = 0;i<genres.length()-2;i++){
+        newGenres +=genres[i];
+    }
+    genre2->setText(newGenres);
+    year2->setText(filmInfo.at(11));
+    length2->setText(filmInfo.at(12) + " min");
+    director2->setText(filmInfo.at(13));
+    country2->setText(filmInfo.at(14));
+    note2->setText(filmInfo.at(15));
+
+    film->setLayout(filmLay);
+    filmLay->addWidget(film2);
+    vInfoLay->addWidget(film);
+
+    genre->setLayout(genreLay);
+    genreLay->addWidget(genre2);
+    vInfoLay->addWidget(genre);
+
+    year->setLayout(yearLay);
+    yearLay->addWidget(year2);
+    hInfoLay->addWidget(year);
+
+    length->setLayout(lenLay);
+    lenLay->addWidget(length2);
+    hInfoLay->addWidget(length);
+
+    director->setLayout(dirLay);
+    dirLay->addWidget(director2);
+    hInfoLay->addWidget(director);
+
+    country->setLayout(countLay);
+    countLay->addWidget(country2);
+    hInfoLay->addWidget(country);
+
+    vInfoLay->addLayout(hInfoLay);
+
+    note->setLayout(noteLay);
+    noteLay->addWidget(note2);
+    vInfoLay->addWidget(note);
+
+
+    infoWIDG->setLayout(vInfoLay);
+    infoMW->setCentralWidget(infoWIDG);
     infoMW->show();
 
+
+}
+
+void MainWindow::comboInsert()
+{
+    QFile comboFilm("Filmy.txt");
+    if(!comboFilm.open(QFile::ReadOnly | QFile::Text)){
+        return;
+    }
+    QList<QStringList> filmy;
+    while(!comboFilm.atEnd()){
+        QString line = comboFilm.readLine();
+        filmy.append(line.split("\t"));
+    }
+    comboFilm.close();
+
+    for(int i = 0;i<filmy.size(); i++){
+        comboBox->addItem(filmy.at(i).at(0));
+    }
 
 }
 
@@ -534,5 +667,38 @@ void MainWindow::showComMSG(QString s)
     msgCom.setWindowIcon(windowIcon());
     msgCom.setIcon(QMessageBox::Warning);
     msgCom.exec();
+
+}
+
+void MainWindow::LoadFilm()
+{
+    qDebug()<<"Something";
+    //QString filmStr = "";
+    QFile films ("Filmy.txt");
+    QString film = comboBox->currentText();
+    listFIlms = new QList<QStringList>();
+    if(!films.open(QFile::ReadOnly | QFile::Text)){
+        return;
+    }
+    while(!films.atEnd()){
+        QString line = films.readLine();
+        QStringList st;
+        st = line.split("\t");
+        listFIlms->append(st);
+    }
+    films.close();
+    for(int i =0;i<listFIlms->size();i++){
+        qDebug()<<listFIlms->at(i).at(0);
+        if(film == listFIlms->at(i).at(0)){
+            aboutFilm(listFIlms->at(i));
+            break;
+        }
+
+    }
+
+
+
+
+
 
 }
