@@ -90,6 +90,7 @@ private:
     QVBoxLayout* vNoteLay;
     QHBoxLayout* hGenderLay;
     QHBoxLayout* hButLay;
+    QComboBox* combobox2;
     QWidget* noteWIDG;
     QLabel* nickLabel;
     QLabel* filmLabel;
@@ -118,12 +119,21 @@ private:
     QLabel* extFilm;
     QGridLayout* gridLay2;
 
+//--------- Komentare---------
+    QMainWindow* noteWindow;
+    QVBoxLayout* vComLay;
+    QHBoxLayout*hComLay;
+    QWidget* comWidg;
+
+
 
 
 
     QList<QStringList>* listFIlms;
     void aboutFilm(QStringList filmInfo);
+    void aboutComment(QStringList CovCOmmmentInfo);
     void comboInsert();
+    void comboInsert2();
 
 
 
@@ -149,7 +159,7 @@ private slots:
     void clearComment();
     void addComment();
     void closeComment();
-
+    void LoadComment();
     void LoadFilm();
 
 
