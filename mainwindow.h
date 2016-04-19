@@ -37,7 +37,6 @@ public:
 
     ~MainWindow();
 
-
 private:
     QMenu* fileMenu;
     QAction* about;
@@ -117,18 +116,15 @@ private:
     QVBoxLayout* vInfoLay;
     QWidget* infoWIDG;
     QHBoxLayout* hInfoLay;
-    QLabel* extFilm;
+    QLabel* film2;
     QGridLayout* gridLay2;
+
 
 //--------- Komentare---------
     QMainWindow* noteWindow;
     QVBoxLayout* vComLay;
     QHBoxLayout*hComLay;
     QWidget* comWidg;
-
-
-
-
 
     QList<QStringList>* listFIlms;
     void aboutFilm(QStringList filmInfo);
@@ -137,16 +133,7 @@ private:
     void comboInsert2();
 
 
-
-
-
-
-
-
 public slots:
-
-
-
 
 
 private slots:
@@ -162,9 +149,7 @@ private slots:
     void closeComment();
     void LoadComment();
     void LoadFilm();
-
-
-
+    void filmDelete();
 
 
 };
